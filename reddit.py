@@ -43,11 +43,9 @@ for submission in search_results:
 
     # 6.2 取得所有留言 (這裡示範一次性抓全部; 量大時要注意效能)
     comments = submission.comments.list()
-    items = []
     if not comments:
         logger.info(f"No comment: {submission.title}")
-        print("No comments found", submission.id)
-        items.append({
+        save_item({
             "post_id": submission.id,
             "title": submission.title,
             "score": submission.score,
@@ -60,7 +58,7 @@ for submission in search_results:
         logger.info(f"Found {len(comments)} comments: {submission.title}")
         # 若有留言，對每則留言各寫一行
         for comment in comments:
-            items.append({
+            save_item({
                 "post_id": submission.id,
                 "title": submission.title,
                 "score": submission.score,
@@ -69,4 +67,3 @@ for submission in search_results:
                 "comment_author": str(comment.author),
                 "comment_body": comment.body
             })
-    save_item(items)
