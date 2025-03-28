@@ -2,7 +2,7 @@ import praw
 from crawlab import save_item
 import argparse
 
-from utils.logger import logger
+from logger import logger
 
 parser = argparse.ArgumentParser(description="Reddit Crawler")
 parser.add_argument('--client-id', type=str, help='Reddit API client-id')
