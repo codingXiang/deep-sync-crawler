@@ -2,13 +2,18 @@ import praw
 from crawlab import save_item
 import argparse
 
+import env
 from logger import logger
 
 parser = argparse.ArgumentParser(description="Reddit Crawler")
-parser.add_argument('--client-id', type=str, help='Reddit API client-id')
-parser.add_argument('--client-secret', type=str, help='Reddit API client-secret')
-parser.add_argument('--user-agent', type=str, help='Reddit API user-agent')
-
+# parser.add_argument('--client-id', type=str, help='Reddit API client-id')
+# parser.add_argument('--client-secret', type=str, help='Reddit API client-secret')
+# parser.add_argument('--user-agent', type=str, help='Reddit API user-agent')
+parser.add_argument('--search', type=str, help='Reddit Search Query')
+parser.add_argument('--sort', type=str,
+                    help='Reddit Search Sort Type, e.g. relevance, new, top, hot, comments, updated, relevance, relevance2, confidence, topall, controversial, old, random, qa, live, blank',
+                    default="relevance")
+parser.add_argument('--limit', type=int, help='Reddit Search Result Limit, default is 10', default=10)
 
 args = parser.parse_args()
 
@@ -17,21 +22,21 @@ args = parser.parse_args()
 
 # === 2. 初始化 PRAW 物件 ===
 reddit = praw.Reddit(
-    client_id=args.client_id,
-    client_secret=args.client_secret,
-    user_agent=args.user_agent,
+    client_id=env.get("CLIENT_ID"),
+    client_secret=env.get("CLIENT_SECRET"),
+    user_agent=env.get("USER_AGENT"),
 )
 
 # === 3. 設定搜尋參數 ===
-search_query = "virtual pet"  # 搜尋關鍵字
-sort_type = "relevance"  # 排序方式: relevance(相關性), new(最新), top(最高分), 等
-result_limit = 200  # 嘗試抓取的貼文數量 (實際可能更少)
+# search_query = "virtual+pet"  # 搜尋關鍵字
+# sort_type = "relevance"  # 排序方式: relevance(相關性), new(最新), top(最高分), 等
+# result_limit = 200  # 嘗試抓取的貼文數量 (實際可能更少)
 
 # === 4. 呼叫 API 進行搜尋 (搜尋範圍: 全域, 即 r/all) ===
 search_results = reddit.subreddit("all").search(
-    query=search_query,
-    sort=sort_type,
-    limit=result_limit
+    args.search,
+    sort=args.sort,
+    limit=args.limit
 )
 
 fieldnames = ["post_id", "title", "score", "url", "comment_id", "comment_author", "comment_body"]
