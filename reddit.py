@@ -2,6 +2,8 @@ import praw
 from crawlab import save_item
 import argparse
 
+from utils.logger import logger
+
 parser = argparse.ArgumentParser(description="Reddit Crawler")
 parser.add_argument('--client-id', type=str, help='Reddit API client-id')
 parser.add_argument('--client-secret', type=str, help='Reddit API client-secret')
@@ -43,6 +45,8 @@ for submission in search_results:
     comments = submission.comments.list()
     items = []
     if not comments:
+        logger.info(f"No comment: {submission.title}")
+        print("No comments found", submission.id)
         items.append({
             "post_id": submission.id,
             "title": submission.title,
@@ -53,6 +57,7 @@ for submission in search_results:
             "comment_body": ""
         })
     else:
+        logger.info(f"Found {len(comments)} comments: {submission.title}")
         # 若有留言，對每則留言各寫一行
         for comment in comments:
             items.append({
